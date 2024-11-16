@@ -22,7 +22,7 @@ import java.time.Instant;
  * @param createdOn
  * @param updatedOn
  */
-@Document
+@Document(collection = "users")
 @Builder
 public record User(@Id String id,
                    @NotBlank String name,
