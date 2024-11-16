@@ -1,6 +1,6 @@
 package com.bridge.skill.usermanagement.controller;
 
-import com.bridge.skill.usermanagement.dao.UserRepository;
+import com.bridge.skill.usermanagement.repository.UserRepository;
 import com.bridge.skill.usermanagement.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
