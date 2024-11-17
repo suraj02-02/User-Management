@@ -2,6 +2,7 @@ package com.bridge.skill.usermanagement.entities;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -14,7 +15,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document(collection = "experience")
+@Builder
 public class Experience {
 
     @Id
@@ -28,5 +30,4 @@ public class Experience {
 
     @NotBlank
     private String jobExperience;
-
 }
