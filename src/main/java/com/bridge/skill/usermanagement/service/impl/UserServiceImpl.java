@@ -6,6 +6,7 @@ import com.bridge.skill.usermanagement.entities.Skills;
 import com.bridge.skill.usermanagement.entities.User;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
 import com.bridge.skill.usermanagement.mapper.RetrieveUserMapper;
+import com.bridge.skill.usermanagement.mapper.UserMapper;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
 import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.bridge.skill.usermanagement.constants.UserConstants.USER_NOT_FOUND_WITH_ID;
 
 @Slf4j
@@ -27,18 +30,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ExperienceRepository experienceRepository;
     private final SkillsRepository skillsRepository;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        User user =  new User();
-        user.setName(userRequestDto.name());
-        user.setEmail(userRequestDto.email());
-        user.setUserType(userRequestDto.userType());
-        user.setProfilePictureUrl(userRequestDto.profilePictureUrl());
-        user.setPassword(userRequestDto.password());
-        userRepository.save(user);
-        return null;
+        final User user = userMapper.toUser(userRequestDto);
+        final User createdUser = userRepository.save(user);
+        return userMapper.toUserResponseDto(createdUser);
     }
 
     @Override
@@ -55,6 +54,14 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
+    @Override
+    public boolean authenticateUser(String username, String password) {
+        Optional<User> userOptional = userRepository.findByName(username);
+        if(userOptional.isEmpty()) {
+            return false;
+        }
+        User user = userOptional.get();
+        return user.getPassword().equals(password);
+    }
 
 }
