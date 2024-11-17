@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface SkillsRepository extends MongoRepository<Skills, String> {
 
     Skills findByUserId(String userId);
+
+    void deleteByUserId(String id);
 }

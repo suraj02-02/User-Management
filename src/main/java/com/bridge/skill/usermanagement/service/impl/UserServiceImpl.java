@@ -12,11 +12,13 @@ import com.bridge.skill.usermanagement.repository.UserRepository;
 import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
 import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
 import com.bridge.skill.usermanagement.service.intf.UserService;
+import com.bridge.skill.usermanagement.util.AsyncTaskAcceptor;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.bridge.skill.usermanagement.constants.UserConstants.USER_DELETED_SUCCESSFULLY;
 import static com.bridge.skill.usermanagement.constants.UserConstants.USER_NOT_FOUND_WITH_ID;
 
 @Slf4j
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ExperienceRepository experienceRepository;
     private final SkillsRepository skillsRepository;
+    private final AsyncTaskAcceptor asyncTaskAcceptor;
 
     @Override
     @Transactional
@@ -47,14 +50,29 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findById(userId)
                 .map(userInfo -> {
                     // TODO the experience and skills details should be served from cache to avoid multiple db calls , since the data will not be changing frequently
-                    final Experience experience = this.experienceRepository.findByUserId(userId);
-                    final Skills skills = this.skillsRepository.findByUserId(userId);
+                    final Experience experience = this.experienceRepository.findByUserId(userInfo.getId());
+                    final Skills skills = this.skillsRepository.findByUserId(userInfo.getId());
                     return RetrieveUserMapper.convertProvidedUserInfoToUserDetailsResponse(userInfo, skills, experience);
                 })
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
     }
 
+    @Override
+    public String deleteUserById(final String userId) {
 
+        return this.userRepository.findById(userId)
+                .map(user -> {
+                    this.userRepository.deleteById(user.getId());
+                    /**** Asynchronous deletion of related documents using virtual
+                     **** threads for better performance and responsiveness ******/
+                    this.asyncTaskAcceptor.submit(() -> {
+                        this.experienceRepository.deleteByUserId(user.getId());
+                        this.skillsRepository.deleteByUserId(user.getId());
+                    });
+                    return USER_DELETED_SUCCESSFULLY + userId;
+                })
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
+    }
 
 
 }
