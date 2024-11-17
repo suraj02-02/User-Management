@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,16 +14,19 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * The {@code User} represents a user in the system.
- *
  */
+
+@Data
+@Builder
 @Document(collection = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class User {
+
     @Id
     private String id;
 
@@ -43,9 +47,9 @@ public class User {
 
     @CreatedDate
     @NotNull
-    private Instant createdOn;
+    private LocalDateTime createdOn;
 
     @LastModifiedDate
     @NotNull
-    private Instant updatedOn;
+    private LocalDateTime updatedOn;
 }
