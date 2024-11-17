@@ -32,10 +32,14 @@ public interface UserService {
      */
     UserProfileResponseDetailDTO retrieveUserDetailsById(final String userId);
 
+
+    boolean authenticateUser(String username, String password);
+
     /**
      * Method is used to delete user details using <code>userId</code>
      * @param userId user id
      * @return response message
      */
     String deleteUserById(final String userId);
+
 }

@@ -4,12 +4,29 @@ import com.bridge.skill.usermanagement.constants.enums.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-public record UserRequestDto(String id,
-                             @NotBlank String name,
-                             @NotBlank @Email(message = "Invalid format for email") String email,
-                             @NotBlank String password,
-                             String profilePictureUrl,
-                             @NotNull UserType userType
-                            ) {
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class UserRequestDto {
+    private String id;
+    @NotBlank
+    private String name;
+
+    @NotBlank
+    @Email(message = "Invalid format for email")
+    private String email;
+
+    @NotBlank
+    private String password;
+
+    String profilePictureUrl;
+
+    @NotNull
+    private UserType userType;
+
 }
