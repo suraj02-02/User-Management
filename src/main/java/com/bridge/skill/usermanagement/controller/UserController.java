@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @Validated
 public class UserController {
 
@@ -21,12 +21,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> registerUser(
-            @RequestBody @Validated UserRequestDto userRequestDto) {
-        return new ResponseEntity<>(userService.createUser(userRequestDto),
-                HttpStatus.CREATED);
-
+    public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Validated UserRequestDto userRequestDto) {
+        return new ResponseEntity<>(userService.createUser(userRequestDto), HttpStatus.CREATED);
     }
-
-
 }

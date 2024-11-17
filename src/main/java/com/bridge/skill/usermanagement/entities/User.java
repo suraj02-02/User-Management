@@ -1,4 +1,4 @@
-package com.bridge.skill.usermanagement.dto;
+package com.bridge.skill.usermanagement.entities;
 
 import com.bridge.skill.usermanagement.constants.enums.UserType;
 import jakarta.validation.constraints.Email;

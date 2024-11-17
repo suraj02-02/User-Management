@@ -1,6 +1,5 @@
-package com.bridge.skill.usermanagement.dao;
+package com.bridge.skill.usermanagement.repository;
 
-import com.bridge.skill.usermanagement.dto.Experience;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ExperienceRepository extends MongoRepository<Experience, String> {

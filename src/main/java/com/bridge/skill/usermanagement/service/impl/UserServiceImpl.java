@@ -1,7 +1,7 @@
 package com.bridge.skill.usermanagement.service.impl;
 
-import com.bridge.skill.usermanagement.dao.UserRepository;
-import com.bridge.skill.usermanagement.dto.User;
+import com.bridge.skill.usermanagement.entities.User;
+import com.bridge.skill.usermanagement.repository.UserRepository;
 import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
 import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
 import com.bridge.skill.usermanagement.service.intf.UserService;
