@@ -16,10 +16,10 @@ public interface UserService {
 
     /**
      * <p>
-     * Method is used to retrieve user details using <code>userId</code>
+     *  Method is used to retrieve user details using <code>userId</code>
      * </p>
      * <p>
-     * User Details in our system is present in :
+     *   User Details in our system is present in :
      *     <ol>
      *         <li>User Entity - General Info of a user</li>
      *         <li>Experience Entity - Experience of a user</li>
@@ -32,6 +32,14 @@ public interface UserService {
      */
     UserProfileResponseDetailDTO retrieveUserDetailsById(final String userId);
 
+
     boolean authenticateUser(String username, String password);
+
+    /**
+     * Method is used to delete user details using <code>userId</code>
+     * @param userId user id
+     * @return response message
+     */
+    String deleteUserById(final String userId);
 
 }

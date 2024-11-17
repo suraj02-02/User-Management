@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface ExperienceRepository extends MongoRepository<Experience, String> {
 
     Experience findByUserId(String userId);
+    void deleteByUserId(String id);
 }

@@ -6,7 +6,6 @@ import com.bridge.skill.usermanagement.entities.Skills;
 import com.bridge.skill.usermanagement.entities.User;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
 import com.bridge.skill.usermanagement.mapper.RetrieveUserMapper;
-import com.bridge.skill.usermanagement.mapper.UserMapper;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
 import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
@@ -30,14 +29,18 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ExperienceRepository experienceRepository;
     private final SkillsRepository skillsRepository;
-    private final UserMapper userMapper;
 
     @Override
     @Transactional
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        final User user = userMapper.toUser(userRequestDto);
-        final User createdUser = userRepository.save(user);
-        return userMapper.toUserResponseDto(createdUser);
+        User user =  new User();
+        user.setName(userRequestDto.name());
+        user.setEmail(userRequestDto.email());
+        user.setUserType(userRequestDto.userType());
+        user.setProfilePictureUrl(userRequestDto.profilePictureUrl());
+        user.setPassword(userRequestDto.password());
+        userRepository.save(user);
+        return null;
     }
 
     @Override
@@ -62,6 +65,23 @@ public class UserServiceImpl implements UserService {
         }
         User user = userOptional.get();
         return user.getPassword().equals(password);
+    }
+
+    @Override
+    public String deleteUserById(final String userId) {
+
+        return this.userRepository.findById(userId)
+                .map(user -> {
+                    this.userRepository.deleteById(user.getId());
+                    /**** Asynchronous deletion of related documents using virtual
+                     **** threads for better performance and responsiveness ******/
+                    this.asyncTaskAcceptor.submit(() -> {
+                        this.experienceRepository.deleteByUserId(user.getId());
+                        this.skillsRepository.deleteByUserId(user.getId());
+                    });
+                    return USER_DELETED_SUCCESSFULLY + userId;
+                })
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
     }
 
 }
