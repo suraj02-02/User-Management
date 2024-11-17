@@ -1,9 +1,11 @@
 package com.bridge.skill.usermanagement.entities;
 
-import com.bridge.skill.usermanagement.constants.enums.Skill;
+import com.bridge.skill.usermanagement.constants.enums.UserSkills;
+import com.bridge.skill.usermanagement.model.UserSkillDetail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -18,7 +20,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document(collection = "skills")
+@Builder
 public class Skills {
     @Id
     private String id;
@@ -27,5 +30,5 @@ public class Skills {
     private String userId;
 
     @NotNull
-    private Set<Skill> skills;
+    private Set<UserSkillDetail> skills;
 }
