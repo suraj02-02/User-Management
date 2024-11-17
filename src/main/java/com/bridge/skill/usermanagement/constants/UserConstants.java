@@ -9,8 +9,6 @@ public class UserConstants {
     /******* Exception constants ******/
     public static final String USER_NOT_FOUND_WITH_ID = "User not found with id : ";
 
-
     /******* Response Messages constants ******/
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully with id : ";
-
 }
