@@ -41,13 +41,14 @@ public class UserController {
         return new ResponseEntity<>(userService.retrieveUserDetailsById(userId) , HttpStatus.OK);
     }
 
-
-
-
-
-
-
-
-
+    /**
+     * Invoke this endpoint to delete user details using <code>userId</code>
+     * @param userId id of user in system
+     * @return response message
+     */
+    @DeleteMapping(USER_ID)
+    public ResponseEntity<String> deleteUserProfileDetailsById(@PathVariable final String userId) {
+        return ResponseEntity.ok(userService.deleteUserById(userId));
+    }
 
 }

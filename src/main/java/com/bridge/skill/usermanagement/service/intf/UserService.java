@@ -31,4 +31,11 @@ public interface UserService {
      * @return user profile details
      */
     UserProfileResponseDetailDTO retrieveUserDetailsById(final String userId);
+
+    /**
+     * Method is used to delete user details using <code>userId</code>
+     * @param userId user id
+     * @return response message
+     */
+    String deleteUserById(final String userId);
 }
