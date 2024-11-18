@@ -1,5 +1,6 @@
 package com.bridge.skill.usermanagement.controller;
 
+import com.bridge.skill.usermanagement.dto.request.UpdateUserRequestDTO;
 import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
 import com.bridge.skill.usermanagement.dto.response.UserProfileResponseDetailDTO;
 import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
@@ -9,13 +10,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import static com.bridge.skill.usermanagement.constants.UserConstants.USER;
 import static com.bridge.skill.usermanagement.constants.UserConstants.USER_ID;
+import static com.bridge.skill.usermanagement.constants.UserConstants.LOGIN;
+
 
 @Validated
 @RestController
@@ -62,6 +61,16 @@ public class UserController {
     @DeleteMapping(USER_ID)
     public ResponseEntity<String> deleteUserProfileDetailsById(@PathVariable final String userId) {
         return ResponseEntity.ok(userService.deleteUserById(userId));
+    }
+
+    /**
+     * Invoke this endpoint to update user details using <code>userId</code>
+     * @param userId id of user in system
+     * @return response message
+     */
+    @PutMapping(USER_ID)
+    public ResponseEntity<String> updateUserProfileDetailsById(@PathVariable final String userId , @RequestBody final UpdateUserRequestDTO updateUserRequestDTO) {
+        return ResponseEntity.ok(userService.updateUserProfileDetailsById(userId , updateUserRequestDTO));
     }
 
 

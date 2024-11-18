@@ -2,17 +2,14 @@ package com.bridge.skill.usermanagement.model;
 
 import com.bridge.skill.usermanagement.constants.enums.SkillProficiency;
 import com.bridge.skill.usermanagement.constants.enums.UserSkills;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class UserSkillDetail {
-
     private UserSkills skill;
     private SkillProficiency proficiency;
 }

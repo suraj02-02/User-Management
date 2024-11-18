@@ -1,21 +1,19 @@
 package com.bridge.skill.usermanagement.service.impl;
 
+import com.bridge.skill.usermanagement.dto.request.UpdateUserRequestDTO;
+import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
 import com.bridge.skill.usermanagement.dto.response.UserProfileResponseDetailDTO;
+import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
 import com.bridge.skill.usermanagement.entities.Experience;
 import com.bridge.skill.usermanagement.entities.Skills;
 import com.bridge.skill.usermanagement.entities.User;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
 import com.bridge.skill.usermanagement.mapper.RetrieveUserMapper;
-import com.bridge.skill.usermanagement.repository.ExperienceRepository;
-import com.bridge.skill.usermanagement.repository.SkillsRepository;
-import com.bridge.skill.usermanagement.exception.UserNotFoundException;
-import com.bridge.skill.usermanagement.mapper.RetrieveUserMapper;
 import com.bridge.skill.usermanagement.mapper.UserMapper;
+import com.bridge.skill.usermanagement.model.UserSkillDetail;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
 import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
-import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
-import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
 import com.bridge.skill.usermanagement.service.intf.UserService;
 import com.bridge.skill.usermanagement.util.AsyncTaskAcceptor;
 import lombok.AllArgsConstructor;
@@ -23,12 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.bridge.skill.usermanagement.constants.UserConstants.USER_DELETED_SUCCESSFULLY;
-import static com.bridge.skill.usermanagement.constants.UserConstants.USER_NOT_FOUND_WITH_ID;
 import java.util.Optional;
+import java.util.Set;
 
-import static com.bridge.skill.usermanagement.constants.UserConstants.USER_DELETED_SUCCESSFULLY;
-import static com.bridge.skill.usermanagement.constants.UserConstants.USER_NOT_FOUND_WITH_ID;
+import static com.bridge.skill.usermanagement.constants.UserConstants.*;
 
 @Slf4j
 @Service
@@ -86,6 +82,37 @@ public class UserServiceImpl implements UserService {
                         this.skillsRepository.deleteByUserId(user.getId());
                     });
                     return USER_DELETED_SUCCESSFULLY + userId;
+                })
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
+    }
+
+
+    @Override
+    @Transactional
+    public String updateUserProfileDetailsById(String userId, UpdateUserRequestDTO updateUserRequestDTO) {
+
+        /**
+         * TODO
+         *   1.Ability to update profile picture
+         *   2.Provide proper structuring for experience and educational details to properly update
+         *   3.Making the update operation atomic
+         *   4.Check the api bottleneck
+         */
+        return Optional.of(this.userRepository.existsById(userId))
+                    .map(isUserExists -> {
+                        // Updating the user experience details
+                        final Experience userExperienceDetail = this.experienceRepository.findByUserId(userId);
+                        userExperienceDetail.setJobExperience(updateUserRequestDTO.getJobExperience());
+                        userExperienceDetail.setEducationDetails(updateUserRequestDTO.getEducationalExperience());
+                        this.experienceRepository.save(userExperienceDetail);
+
+                        // Updating the user skill details
+                        final Skills userSkillDetail = this.skillsRepository.findByUserId(userId);
+                        Set<UserSkillDetail> userSkillDetails = userSkillDetail.getSkills();
+                        userSkillDetails.addAll(updateUserRequestDTO.getSkillDetail());
+                        this.skillsRepository.save(userSkillDetail);
+
+                        return USER_UPDATED_SUCCESSFULLY + userId;
                 })
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
     }

@@ -12,4 +12,5 @@ public class UserConstants {
 
     /******* Response Messages constants ******/
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully with id : ";
+    public static final String USER_UPDATED_SUCCESSFULLY = "User updated successfully with id : ";
 }

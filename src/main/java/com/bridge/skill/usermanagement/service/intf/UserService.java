@@ -1,5 +1,6 @@
 package com.bridge.skill.usermanagement.service.intf;
 
+import com.bridge.skill.usermanagement.dto.request.UpdateUserRequestDTO;
 import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
 import com.bridge.skill.usermanagement.dto.response.UserProfileResponseDetailDTO;
 import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
@@ -42,4 +43,12 @@ public interface UserService {
      */
     String deleteUserById(final String userId);
 
+    /**
+     * Method is used to update user details using <code>userId</code>
+     *
+     * @param userId               user id
+     * @param updateUserRequestDTO
+     * @return response message
+     */
+    String updateUserProfileDetailsById(final String userId, UpdateUserRequestDTO updateUserRequestDTO);
 }

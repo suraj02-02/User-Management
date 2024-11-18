@@ -13,7 +13,9 @@ import lombok.*;
 @Getter
 @Setter
 public class UserRequestDto {
+
     private String id;
+
     @NotBlank
     private String name;
 
@@ -24,9 +26,8 @@ public class UserRequestDto {
     @NotBlank
     private String password;
 
-    String profilePictureUrl;
+    private String profilePictureUrl;
 
     @NotNull
     private UserType userType;
-
 }
