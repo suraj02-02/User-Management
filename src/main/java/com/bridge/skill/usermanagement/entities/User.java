@@ -20,11 +20,12 @@ import java.time.LocalDateTime;
  * The {@code User} represents a user in the system.
  */
 
-@Data
+
 @Builder
 @Document(collection = "users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class User {
 
     @Id

@@ -4,11 +4,15 @@ import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
 import com.bridge.skill.usermanagement.dto.response.UserProfileResponseDetailDTO;
 import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
 import com.bridge.skill.usermanagement.service.intf.UserService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.bridge.skill.usermanagement.constants.UserConstants.USER;
 import static com.bridge.skill.usermanagement.constants.UserConstants.USER_ID;
@@ -41,6 +45,15 @@ public class UserController {
         return new ResponseEntity<>(userService.retrieveUserDetailsById(userId) , HttpStatus.OK);
     }
 
+    @PostMapping(LOGIN)
+    public ResponseEntity<String> loginUser(@RequestParam @NotBlank String userName, @RequestParam @NotBlank String password) {
+        boolean authenticated = userService.authenticateUser(userName, password);
+        if (authenticated) {
+            return ResponseEntity.ok("Login Successful");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not valid credentials");
+    }
+
     /**
      * Invoke this endpoint to delete user details using <code>userId</code>
      * @param userId id of user in system
@@ -50,7 +63,6 @@ public class UserController {
     public ResponseEntity<String> deleteUserProfileDetailsById(@PathVariable final String userId) {
         return ResponseEntity.ok(userService.deleteUserById(userId));
     }
-
 
 
 
