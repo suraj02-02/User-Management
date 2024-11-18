@@ -14,6 +14,8 @@ import com.bridge.skill.usermanagement.model.UserSkillDetail;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
 import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
+import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
+import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
 import com.bridge.skill.usermanagement.service.intf.UserService;
 import com.bridge.skill.usermanagement.util.AsyncTaskAcceptor;
 import lombok.AllArgsConstructor;
@@ -51,8 +53,8 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findById(userId)
                 .map(userInfo -> {
                     // TODO the experience and skills details should be served from cache to avoid multiple db calls , since the data will not be changing frequently
-                    final Experience experience = this.experienceRepository.findByUserId(userId);
-                    final Skills skills = this.skillsRepository.findByUserId(userId);
+                    final Experience experience = this.experienceRepository.findByUserId(userInfo.getId());
+                    final Skills skills = this.skillsRepository.findByUserId(userInfo.getId());
                     return RetrieveUserMapper.convertProvidedUserInfoToUserDetailsResponse(userInfo, skills, experience);
                 })
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
