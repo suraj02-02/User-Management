@@ -1,15 +1,14 @@
-package com.bridge.skill.usermanagement.model;
+package com.bridge.skill.usermanagement.dto.response;
 
 import com.bridge.skill.usermanagement.constants.enums.SkillProficiency;
 import com.bridge.skill.usermanagement.constants.enums.UserSkills;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
-public class UserSkillDetail {
+public class UserSkillsInfoResponse {
+
     private UserSkills skill;
     private SkillProficiency proficiency;
 }

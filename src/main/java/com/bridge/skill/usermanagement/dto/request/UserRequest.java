@@ -10,9 +10,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
-public class UserRequestDto {
+@Getter
+public class UserRequest {
 
     private String id;
 

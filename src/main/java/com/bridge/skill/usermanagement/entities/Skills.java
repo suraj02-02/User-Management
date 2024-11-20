@@ -1,7 +1,5 @@
 package com.bridge.skill.usermanagement.entities;
 
-import com.bridge.skill.usermanagement.constants.enums.UserSkills;
-import com.bridge.skill.usermanagement.model.UserSkillDetail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

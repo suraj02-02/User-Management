@@ -1,6 +1,6 @@
 package com.bridge.skill.usermanagement.mapper;
 
-import com.bridge.skill.usermanagement.exception.GenericExceptionResponse;
+import com.bridge.skill.usermanagement.dto.response.GenericExceptionResponse;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 
@@ -27,6 +27,4 @@ public class GenericExceptionMapper {
                     .exceptionMessage(exception.getMessage())
                     .timestamp(LocalDateTime.now())
                     .build();
-
-
 }

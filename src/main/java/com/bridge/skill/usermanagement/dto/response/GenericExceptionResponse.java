@@ -1,14 +1,10 @@
-package com.bridge.skill.usermanagement.exception;
+package com.bridge.skill.usermanagement.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Data
 public class GenericExceptionResponse {
