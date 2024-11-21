@@ -5,9 +5,11 @@ import com.bridge.skill.usermanagement.constants.enums.UserSkills;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Builder
-public class UserSkillsInfoResponse {
+public class UserSkillsInfoResponse implements Serializable {
 
     private UserSkills skill;
     private SkillProficiency proficiency;

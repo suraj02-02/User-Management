@@ -5,10 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @Valid
-public class EducationalDetailsRequest {
+public class EducationalDetailsRequest implements Serializable {
 
     @NotBlank(message = "Institute name is Invalid")
     private String instituteName;

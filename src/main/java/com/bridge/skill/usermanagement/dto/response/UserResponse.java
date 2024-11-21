@@ -3,12 +3,14 @@ package com.bridge.skill.usermanagement.dto.response;
 import com.bridge.skill.usermanagement.constants.enums.UserType;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse {
+public class UserResponse implements Serializable {
+
     private String id;
 
     private String name;

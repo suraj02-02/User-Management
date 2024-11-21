@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
                     // TODO the experience and skills details should be served from cache to avoid multiple db calls , since the data will not be changing frequently
                     final Experience experience = this.experienceRepository.findByUserId(userInfo.getId());
                     final Skills skills = this.skillsRepository.findByUserId(userInfo.getId());
-                    return RetrieveUserMapper.convertProvidedUserInfoToUserDetailsResponse(userInfo, skills, experience);
+                    return RetrieveUserMapper.convertUserInfoTOUserProfileDetailResponse(userInfo, skills, experience);
                 })
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
     }

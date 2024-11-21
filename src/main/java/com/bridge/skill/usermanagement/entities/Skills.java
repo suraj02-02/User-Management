@@ -21,6 +21,7 @@ import java.util.Set;
 @Document(collection = "skills")
 @Builder
 public class Skills {
+
     @Id
     private String id;
 

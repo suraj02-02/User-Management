@@ -6,13 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.io.Serializable;
+
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
-public class UserRequest {
+public class UserRequest implements Serializable {
 
     private String id;
 

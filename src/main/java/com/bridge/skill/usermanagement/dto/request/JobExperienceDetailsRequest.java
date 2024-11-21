@@ -5,10 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @Valid
-public class JobExperienceDetailsRequest {
+public class JobExperienceDetailsRequest implements Serializable {
 
     @NotBlank(message = "companyName is Invalid")
     private String companyName;

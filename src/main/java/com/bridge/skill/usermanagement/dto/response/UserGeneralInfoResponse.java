@@ -1,12 +1,18 @@
 package com.bridge.skill.usermanagement.dto.response;
 
 import com.bridge.skill.usermanagement.constants.enums.UserType;
+import lombok.Builder;
+import lombok.Data;
 
-public record UserGeneralInfoResponse(
-        String id,
-        String name,
-        String email,
-        UserType userType,
-        String profilePictureUrl
-) {
+import java.io.Serializable;
+
+@Data
+@Builder
+public class UserGeneralInfoResponse implements Serializable {
+
+    private String id;
+    private String name;
+    private String email;
+    private UserType userType;
+    private String profilePictureUrl;
 }
