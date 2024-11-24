@@ -10,6 +10,7 @@ import com.bridge.skill.usermanagement.dto.response.UserProfileDetailResponse;
 import com.bridge.skill.usermanagement.dto.response.UserResponse;
 import com.bridge.skill.usermanagement.entities.*;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
+import com.bridge.skill.usermanagement.integration.messagingbusclient.MessageEventBus;
 import com.bridge.skill.usermanagement.mapper.RetrieveUserMapper;
 import com.bridge.skill.usermanagement.mapper.UserMapper;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
@@ -38,21 +39,37 @@ public class UserServiceImpl implements UserService {
     private final SkillsRepository skillsRepository;
     private final UserMapper userMapper;
     private final AsyncTaskAcceptor asyncTaskAcceptor;
+    private final MessageEventBus messageEventBus;
 
     @Override
     @Transactional
     public UserResponse createUser(UserRequest userRequest) {
+
+        /**
+         * TODO
+         *   1.A event of NEW_USER event should be published while creating a new user
+         *   2.To check for Pushing the image document to AWS-S3.
+         */
+
         User user =  userMapper.toUser(userRequest);
         User createdUser = userRepository.save(user);
+        // USER_REGISTRATION_EVENT published using MessageEventBus
+        this.asyncTaskAcceptor.submit(() -> {
+            messageEventBus.publishEvent(createdUser);
+        });
         return userMapper.toUserResponseDto(createdUser);
     }
 
     @Override
     public UserProfileDetailResponse retrieveUserDetailsById(final String userId) {
 
+        /**
+         * TODO
+         *   1.Experience and skills details should be served from cache to avoid multiple db calls
+         *   , since the data will not be changing frequently
+         */
         return this.userRepository.findById(userId)
                 .map(userInfo -> {
-                    // TODO the experience and skills details should be served from cache to avoid multiple db calls , since the data will not be changing frequently
                     final Experience experience = this.experienceRepository.findByUserId(userInfo.getId());
                     final Skills skills = this.skillsRepository.findByUserId(userInfo.getId());
                     return RetrieveUserMapper.convertUserInfoTOUserProfileDetailResponse(userInfo, skills, experience);

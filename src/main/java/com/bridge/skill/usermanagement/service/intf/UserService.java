@@ -46,8 +46,8 @@ public interface UserService {
     /**
      * Method is used to update user details using <code>userId</code>
      *
-     * @param userId               user id
-     * @param updateUserRequest
+     * @param userId user id
+     * @param updateUserRequest update user request
      * @return response message
      */
     String updateUserProfileDetailsById(final String userId, UpdateUserRequest updateUserRequest);

@@ -69,7 +69,8 @@ public class UserController {
      * @return response message
      */
     @PutMapping(USER_ID)
-    public ResponseEntity<String> updateUserProfileDetailsById(@PathVariable final String userId , @RequestBody final UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<String> updateUserProfileDetailsById(@PathVariable final String userId ,
+                                                               @RequestBody final UpdateUserRequest updateUserRequest) {
         return ResponseEntity.ok(userService.updateUserProfileDetailsById(userId , updateUserRequest));
     }
 
