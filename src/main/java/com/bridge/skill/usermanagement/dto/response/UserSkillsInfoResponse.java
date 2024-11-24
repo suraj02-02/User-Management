@@ -1,17 +1,15 @@
-package com.bridge.skill.usermanagement.model;
+package com.bridge.skill.usermanagement.dto.response;
 
 import com.bridge.skill.usermanagement.constants.enums.SkillProficiency;
 import com.bridge.skill.usermanagement.constants.enums.UserSkills;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Builder
+import java.io.Serializable;
+
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserSkillDetail {
+@Builder
+public class UserSkillsInfoResponse implements Serializable {
 
     private UserSkills skill;
     private SkillProficiency proficiency;

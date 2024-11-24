@@ -4,7 +4,6 @@ import com.bridge.skill.usermanagement.dto.response.*;
 import com.bridge.skill.usermanagement.entities.Experience;
 import com.bridge.skill.usermanagement.entities.Skills;
 import com.bridge.skill.usermanagement.entities.User;
-import com.bridge.skill.usermanagement.model.UserSkillDetail;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,41 +23,41 @@ public class RetrieveUserMapper {
      * @param experience experience
      * @return user profile details
      */
-    public static UserProfileResponseDetailDTO convertProvidedUserInfoToUserDetailsResponse(User user, Skills skills, Experience experience) {
+    public static UserProfileDetailResponse convertUserInfoTOUserProfileDetailResponse(final User user,
+                                                                                       final Skills skills,
+                                                                                       final Experience experience) {
 
-        return new UserProfileResponseDetailDTO(
-                convertUserToUserGeneralInfoResponse.apply(user),
-                convertExperienceToUserExperienceInfoResponseDTO.apply(experience),
-                generateUserSkillResponseDTO(skills)
-        );
+        return UserProfileDetailResponse.builder()
+                .userGeneralInfoResponseDTO(convertUserToUserGeneralInfoResponse.apply(user))
+                .userExperienceInfoResponse(convertExperienceToUserExperienceInfoResponse.apply(experience))
+                .userSkillsInfoResponse(convertSkillsToUserSkillsInfoResponse.apply(skills))
+                .build();
     }
 
     /**
      * Mapper to convert <code>User</code> to <code>UserGeneralInfoResponse</code>
      */
-    public static final Function<User, UserGeneralInfoResponseDTO> convertUserToUserGeneralInfoResponse =
+    public static final Function<User, UserGeneralInfoResponse> convertUserToUserGeneralInfoResponse =
             userInfo -> Optional.ofNullable(userInfo)
-                    .map(user ->
-                            new UserGeneralInfoResponseDTO(
-                                    user.getId(),
-                                    user.getName(),
-                                    user.getEmail(),
-                                    user.getUserType(),
-                                    user.getProfilePictureUrl()
-                            )
+                    .map(user -> UserGeneralInfoResponse.builder()
+                                            .id(user.getId())
+                                            .name(user.getName())
+                                            .email(user.getEmail())
+                                            .userType(user.getUserType())
+                                            .profilePictureUrl(user.getProfilePictureUrl())
+                                            .build()
                     ).orElse(null);
 
     /**
      * Mapper to convert <code>Experience</code> to <code>UserExperienceInfoResponseDTO</code>
      */
-    public static final Function<Experience , UserExperienceInfoResponseDTO> convertExperienceToUserExperienceInfoResponseDTO =
+    public static final Function<Experience , UserExperienceInfoResponse> convertExperienceToUserExperienceInfoResponse =
             experienceInfo -> Optional.ofNullable(experienceInfo)
-                    .map(experience ->
-                            new UserExperienceInfoResponseDTO(
-                                    experience.getJobExperience(),
-                                    experience.getEducationDetails()
-                            )
-                    ).orElse(null);
+                         .map(experience -> UserExperienceInfoResponse.builder()
+                                .jobExperienceDetails(experience.getJobExperienceDetails())
+                                .educationalExperienceDetails(experience.getEducationalExperienceDetails())
+                                .build()
+                         ).orElse(null);
 
 
     /**
@@ -66,26 +65,16 @@ public class RetrieveUserMapper {
      * @param skills
      * @return
      */
-    private static List<UserSkillsInfoResponseDTO> generateUserSkillResponseDTO(Skills skills) {
-        return Optional.ofNullable(skills)
-                .map(skill -> skill.getSkills())
-                .orElse(Collections.emptySet())
-                .stream()
-                .filter(Objects::nonNull)
-                .map(RetrieveUserMapper::convertSkillsToUserSkillsInfoResponseDTO)
-                .toList();
-    }
-
-    /**
-     * Method converts <code>UserSkillDetail</code> to <code>UserSkillsInfoResponseDTO</code>
-     * @param userSkillDetail
-     * @return
-     */
-    public static final UserSkillsInfoResponseDTO convertSkillsToUserSkillsInfoResponseDTO(final UserSkillDetail userSkillDetail) {
-        return new UserSkillsInfoResponseDTO(
-                userSkillDetail.getSkill(),
-                userSkillDetail.getProficiency()
-        );
-    }
+    private static final Function<Skills, List<UserSkillsInfoResponse>> convertSkillsToUserSkillsInfoResponse =
+    skills -> Optional.ofNullable(skills)
+            .map(Skills::getSkills)
+            .orElse(Collections.emptySet())
+            .stream()
+            .filter(Objects::nonNull)
+            .map(skill -> UserSkillsInfoResponse.builder()
+                        .skill(skill.getSkill())
+                        .proficiency(skill.getProficiency())
+                        .build()
+            ).toList();
 
 }
