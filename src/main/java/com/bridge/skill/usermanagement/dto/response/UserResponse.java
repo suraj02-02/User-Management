@@ -12,16 +12,12 @@ import java.time.LocalDateTime;
 public class UserResponse implements Serializable {
 
     private String id;
-
     private String name;
-
     private String email;
-
+    private String countryCode;
+    private String mobileNumber;
     private String profilePictureUrl;
-
     private UserType userType;
-
     private LocalDateTime createdOn;
-
     private LocalDateTime updatedOn;
 }

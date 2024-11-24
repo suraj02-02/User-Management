@@ -1,16 +1,22 @@
 package com.bridge.skill.usermanagement.service.impl;
 
+import com.bridge.skill.usermanagement.config.CableEventTypeConfig;
+import com.bridge.skill.usermanagement.constants.enums.UserManagementEventType;
 import com.bridge.skill.usermanagement.dto.model.EducationalDetails;
 import com.bridge.skill.usermanagement.dto.model.JobExperienceDetails;
+import com.bridge.skill.usermanagement.dto.model.UserRegistrationEventData;
 import com.bridge.skill.usermanagement.dto.request.EducationalDetailsRequest;
 import com.bridge.skill.usermanagement.dto.request.JobExperienceDetailsRequest;
 import com.bridge.skill.usermanagement.dto.request.UpdateUserRequest;
 import com.bridge.skill.usermanagement.dto.request.UserRequest;
 import com.bridge.skill.usermanagement.dto.response.UserProfileDetailResponse;
 import com.bridge.skill.usermanagement.dto.response.UserResponse;
-import com.bridge.skill.usermanagement.entities.*;
+import com.bridge.skill.usermanagement.entities.Experience;
+import com.bridge.skill.usermanagement.entities.Skills;
+import com.bridge.skill.usermanagement.entities.User;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
 import com.bridge.skill.usermanagement.integration.messagingbusclient.MessageEventBus;
+import com.bridge.skill.usermanagement.mapper.EventDataMapper;
 import com.bridge.skill.usermanagement.mapper.RetrieveUserMapper;
 import com.bridge.skill.usermanagement.mapper.UserMapper;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
@@ -18,7 +24,7 @@ import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
 import com.bridge.skill.usermanagement.service.intf.UserService;
 import com.bridge.skill.usermanagement.util.AsyncTaskAcceptor;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +37,7 @@ import static com.bridge.skill.usermanagement.constants.UserConstants.*;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -40,22 +46,19 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final AsyncTaskAcceptor asyncTaskAcceptor;
     private final MessageEventBus messageEventBus;
+    private final CableEventTypeConfig cableEventTypeConfig;
 
     @Override
-    @Transactional
     public UserResponse createUser(UserRequest userRequest) {
 
-        /**
-         * TODO
-         *   1.A event of NEW_USER event should be published while creating a new user
-         *   2.To check for Pushing the image document to AWS-S3.
-         */
-
-        User user =  userMapper.toUser(userRequest);
-        User createdUser = userRepository.save(user);
-        // USER_REGISTRATION_EVENT published using MessageEventBus
+        final User user =  userMapper.toUser(userRequest);
+        final User createdUser = userRepository.save(user);
+        /**** Publishing the event for new user registration ****/
         this.asyncTaskAcceptor.submit(() -> {
-            messageEventBus.publishEvent(createdUser);
+            final String topicBasedOnEvent = this.cableEventTypeConfig.getTopicBasedOnEvent(UserManagementEventType.USER_REGISTRATION_EVENT.name());
+            final UserRegistrationEventData eventData = EventDataMapper.userToUserRegistrationEventData.apply(createdUser);
+            // TODO check if to pass data as string or Json object
+            messageEventBus.publishEvent(eventData.toString() , topicBasedOnEvent);
         });
         return userMapper.toUserResponseDto(createdUser);
     }

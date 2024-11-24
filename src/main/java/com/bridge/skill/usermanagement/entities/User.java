@@ -4,10 +4,7 @@ import com.bridge.skill.usermanagement.constants.enums.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,6 +22,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@ToString
 public class User {
 
     @Id
@@ -32,6 +30,8 @@ public class User {
     private String name;
     @Email(message = "Invalid format for email")
     private String email;
+    private String countryCode;
+    private String mobileNumber;
     private String password;
     private String profilePictureUrl;
     private UserType userType;

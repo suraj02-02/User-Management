@@ -18,14 +18,14 @@ public class KafkaEventCable implements MessageEventBus {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public KafkaEventCable(KafkaTemplate<String, Object> kafkaTemplate) {
+    public KafkaEventCable(final KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
-    public void publishEvent(Object event) {
+    public void publishEvent(final Object event , final String topic) {
 
-        final CompletableFuture<SendResult<String, Object>> future = this.kafkaTemplate.send("test", event);
+        final CompletableFuture<SendResult<String, Object>> future = this.kafkaTemplate.send(topic , event);
         future.whenComplete((result , ex) -> {
             if (ex != null) {
                 log.error("Error while publishing event to kafka", ex);
@@ -38,6 +38,7 @@ public class KafkaEventCable implements MessageEventBus {
     @Override
     //@KafkaListener(topics = "test", groupId = "group_id")
     public Object consumeEvent() {
+        log.error("Operation not supported as of now!");
         return null;
     }
 

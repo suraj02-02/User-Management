@@ -10,9 +10,10 @@ public interface MessageEventBus {
 
     /**
      * Method is used to publish event to message broker configured
-     * @param event
+     * @param event event data
+     * @param topic topic name
      */
-    void publishEvent(final Object event);
+    void publishEvent(final Object event , final String topic);
 
     /**
      * Method is used to consume event from message broker configured

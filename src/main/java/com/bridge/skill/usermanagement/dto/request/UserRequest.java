@@ -10,13 +10,10 @@ import java.io.Serializable;
 
 
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
 public class UserRequest implements Serializable {
-
-    private String id;
 
     @NotBlank
     private String name;
@@ -24,10 +21,13 @@ public class UserRequest implements Serializable {
     @NotBlank
     @Email(message = "Invalid format for email")
     private String email;
+    @NotBlank
+    private String countryCode;
+    @NotBlank
+    private String mobileNumber;
 
     @NotBlank
     private String password;
-
     private String profilePictureUrl;
 
     @NotNull

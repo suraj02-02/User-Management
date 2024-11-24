@@ -1,0 +1,30 @@
+server:
+  port: 7171
+spring:
+  application:
+    name: User-Management
+  #DB Config
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/userdb
+      database: userdb
+  #Kafka Config
+  kafka:
+    bootstrap-servers: localhost:9092
+    #producer configs
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+# Configuring kafka topics for different event types
+cable:
+  event-types:
+    USER_REGISTRATION_EVENT: user-registration-topic
+    FORGOT_PASSWORD_EVENT: forgot-password-topic
+    RESET_PASSWORD_EVENT: forgot-password-topic
+    OTP_VERIFICATION_EVENT: otp-verification-topic
