@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         final User createdUser = userRepository.save(user);
         /**** Publishing the event for new user registration ****/
         this.asyncTaskAcceptor.submit(() -> {
-            final String topicBasedOnEvent = this.cableEventTypeConfig.getTopicBasedOnEvent(UserManagementEventType.USER_REGISTRATION_EVENT.name());
+            final String topicBasedOnEvent = this.cableEventTypeConfig.getTopicBasedOnEvent(UserManagementEventType.USER_REGISTRATION_EVENT);
             final UserRegistrationEventData eventData = EventDataMapper.userToUserRegistrationEventData.apply(createdUser);
             // TODO check if to pass data as string or Json object
             messageEventBus.publishEvent(eventData.toString() , topicBasedOnEvent);
