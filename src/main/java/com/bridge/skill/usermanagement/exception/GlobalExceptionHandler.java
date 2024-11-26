@@ -1,5 +1,6 @@
 package com.bridge.skill.usermanagement.exception;
 
+import com.bridge.skill.usermanagement.dto.response.GenericExceptionResponse;
 import com.bridge.skill.usermanagement.mapper.GenericExceptionMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

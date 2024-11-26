@@ -27,7 +27,7 @@ public class AsyncTaskAcceptor {
     public void submit(final Runnable runnable) {
         try{
             log.info("Submitting task to executor service");
-            executorService.submit(runnable);
+            this.executorService.submit(runnable);
             log.info("Submitted task to executor service");
         }catch (Exception e) {
             throw new RuntimeException("Error while submitting task to executor service", e);

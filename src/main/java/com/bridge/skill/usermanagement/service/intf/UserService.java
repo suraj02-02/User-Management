@@ -1,18 +1,19 @@
 package com.bridge.skill.usermanagement.service.intf;
 
-import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
-import com.bridge.skill.usermanagement.dto.response.UserProfileResponseDetailDTO;
-import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
+import com.bridge.skill.usermanagement.dto.request.UpdateUserRequest;
+import com.bridge.skill.usermanagement.dto.request.UserRequest;
+import com.bridge.skill.usermanagement.dto.response.UserProfileDetailResponse;
+import com.bridge.skill.usermanagement.dto.response.UserResponse;
 
 public interface UserService {
 
     /**
      * Method is user to create user in the system having required info in the request <code>userRequestDto</code>
-     * @param userRequestDto user info
+     * @param userRequest user info
      * @return user response
      */
 
-    UserResponseDto createUser(final UserRequestDto userRequestDto);
+    UserResponse createUser(final UserRequest userRequest);
 
     /**
      * <p>
@@ -30,7 +31,10 @@ public interface UserService {
      * @param userId user id
      * @return user profile details
      */
-    UserProfileResponseDetailDTO retrieveUserDetailsById(final String userId);
+    UserProfileDetailResponse retrieveUserDetailsById(final String userId);
+
+
+    boolean authenticateUser(String username, String password);
 
     /**
      * Method is used to delete user details using <code>userId</code>
@@ -38,4 +42,13 @@ public interface UserService {
      * @return response message
      */
     String deleteUserById(final String userId);
+
+    /**
+     * Method is used to update user details using <code>userId</code>
+     *
+     * @param userId user id
+     * @param updateUserRequest update user request
+     * @return response message
+     */
+    String updateUserProfileDetailsById(final String userId, UpdateUserRequest updateUserRequest);
 }

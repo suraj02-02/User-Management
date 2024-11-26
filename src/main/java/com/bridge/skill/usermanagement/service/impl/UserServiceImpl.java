@@ -1,61 +1,94 @@
 package com.bridge.skill.usermanagement.service.impl;
 
-import com.bridge.skill.usermanagement.dto.response.UserProfileResponseDetailDTO;
+import com.bridge.skill.usermanagement.config.CableEventTypeConfig;
+import com.bridge.skill.usermanagement.constants.enums.UserManagementEventType;
+import com.bridge.skill.usermanagement.dto.model.EducationalDetails;
+import com.bridge.skill.usermanagement.dto.model.JobExperienceDetails;
+import com.bridge.skill.usermanagement.dto.model.UserRegistrationEventData;
+import com.bridge.skill.usermanagement.dto.request.EducationalDetailsRequest;
+import com.bridge.skill.usermanagement.dto.request.JobExperienceDetailsRequest;
+import com.bridge.skill.usermanagement.dto.request.UpdateUserRequest;
+import com.bridge.skill.usermanagement.dto.request.UserRequest;
+import com.bridge.skill.usermanagement.dto.response.UserProfileDetailResponse;
+import com.bridge.skill.usermanagement.dto.response.UserResponse;
 import com.bridge.skill.usermanagement.entities.Experience;
 import com.bridge.skill.usermanagement.entities.Skills;
 import com.bridge.skill.usermanagement.entities.User;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
+import com.bridge.skill.usermanagement.integration.messagingbusclient.MessageEventBus;
+import com.bridge.skill.usermanagement.mapper.EventDataMapper;
 import com.bridge.skill.usermanagement.mapper.RetrieveUserMapper;
+import com.bridge.skill.usermanagement.mapper.UserMapper;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
 import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
-import com.bridge.skill.usermanagement.dto.request.UserRequestDto;
-import com.bridge.skill.usermanagement.dto.response.UserResponseDto;
 import com.bridge.skill.usermanagement.service.intf.UserService;
 import com.bridge.skill.usermanagement.util.AsyncTaskAcceptor;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-import static com.bridge.skill.usermanagement.constants.UserConstants.USER_DELETED_SUCCESSFULLY;
-import static com.bridge.skill.usermanagement.constants.UserConstants.USER_NOT_FOUND_WITH_ID;
+import java.util.List;
+import java.util.Optional;
+
+import static com.bridge.skill.usermanagement.constants.UserConstants.*;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ExperienceRepository experienceRepository;
     private final SkillsRepository skillsRepository;
+    private final UserMapper userMapper;
     private final AsyncTaskAcceptor asyncTaskAcceptor;
-  
-  
+    private final MessageEventBus messageEventBus;
+    private final CableEventTypeConfig cableEventTypeConfig;
+
     @Override
-    @Transactional
-    public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        User user =  new User();
-        user.setName(userRequestDto.name());
-        user.setEmail(userRequestDto.email());
-        user.setUserType(userRequestDto.userType());
-        user.setProfilePictureUrl(userRequestDto.profilePictureUrl());
-        user.setPassword(userRequestDto.password());
-        userRepository.save(user);
-        return null;
+    public UserResponse createUser(UserRequest userRequest) {
+
+        final User user =  userMapper.toUser(userRequest);
+        final User createdUser = userRepository.save(user);
+        /**** Publishing the event for new user registration ****/
+        this.asyncTaskAcceptor.submit(() -> {
+            final String topicBasedOnEvent = this.cableEventTypeConfig.getTopicBasedOnEvent(UserManagementEventType.USER_REGISTRATION_EVENT);
+            final UserRegistrationEventData eventData = EventDataMapper.userToUserRegistrationEventData.apply(createdUser);
+            // TODO check if to pass data as string or Json object
+            messageEventBus.publishEvent(eventData.toString() , topicBasedOnEvent);
+        });
+        return userMapper.toUserResponseDto(createdUser);
     }
 
     @Override
-    public UserProfileResponseDetailDTO retrieveUserDetailsById(final String userId) {
+    public UserProfileDetailResponse retrieveUserDetailsById(final String userId) {
 
+        /**
+         * TODO
+         *   1.Experience and skills details should be served from cache to avoid multiple db calls
+         *   , since the data will not be changing frequently
+         */
         return this.userRepository.findById(userId)
                 .map(userInfo -> {
-                    // TODO the experience and skills details should be served from cache to avoid multiple db calls , since the data will not be changing frequently
                     final Experience experience = this.experienceRepository.findByUserId(userInfo.getId());
                     final Skills skills = this.skillsRepository.findByUserId(userInfo.getId());
-                    return RetrieveUserMapper.convertProvidedUserInfoToUserDetailsResponse(userInfo, skills, experience);
+                    return RetrieveUserMapper.convertUserInfoTOUserProfileDetailResponse(userInfo, skills, experience);
                 })
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
+    }
+
+
+    @Override
+    public boolean authenticateUser(String username, String password) {
+        Optional<User> userOptional = userRepository.findByName(username);
+        if(userOptional.isEmpty()) {
+            return false;
+        }
+        User user = userOptional.get();
+        return user.getPassword().equals(password);
     }
 
     @Override
@@ -74,5 +107,89 @@ public class UserServiceImpl implements UserService {
                 })
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
     }
-  
+
+
+    @Override
+    @Transactional
+    public String updateUserProfileDetailsById(final String userId, final UpdateUserRequest updateUserRequest) {
+
+        /**
+         * TODO
+         *   1.Ability to update profile picture
+         *   2.Provide proper structuring for experience and educational details to properly update -- Done
+         *   3.Making the update operation atomic
+         *   4.Check the api bottleneck
+         */
+        return Optional.of(this.userRepository.existsById(userId))
+                    .map(isUserExists -> {
+                        /*** Updating user experience details ****/
+                        Experience experience = this.experienceRepository.findByUserId(userId);
+                        if(experience == null) {
+                            experience = Experience.builder().userId(userId).build();
+                        }
+
+                       populateUserEducationalExperienceDetails(updateUserRequest.getEducationalExperienceDetails() , experience);
+                       populateUserJobExperienceDetails(updateUserRequest.getJobExperienceDetails() , experience);
+                       this.experienceRepository.save(experience);
+
+                       /**** Updating user skill details *****/
+                        Skills skill = this.skillsRepository.findByUserId(userId);
+                        if (skill == null) {
+                            skill = Skills.builder().userId(userId).build();
+                        }
+
+                        skill.setSkills(updateUserRequest.getSkillDetail());
+                        this.skillsRepository.save(skill);
+                        return USER_UPDATED_SUCCESSFULLY + userId;
+                })
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
+    }
+
+    /**
+     * Method is used to populate the user educational experience details from the request <code>educationalDetailsRequestDTO</code>
+     * to the <code>experience</code> document
+     * @param educationalDetailsRequest educational details Request
+     * @param experience experience Document
+     */
+    private void populateUserEducationalExperienceDetails(final List<EducationalDetailsRequest> educationalDetailsRequest,
+                                                          final Experience experience) {
+
+        Optional.ofNullable(educationalDetailsRequest)
+                .filter(obj -> !CollectionUtils.isEmpty(obj))
+                .map(obj -> obj.stream()
+                        .map(educationalDetailEach -> EducationalDetails.builder()
+                            .instituteName(educationalDetailEach.getInstituteName())
+                            .specialization(educationalDetailEach.getSpecialization())
+                            .startYear(educationalDetailEach.getStartYear())
+                            .endYear(educationalDetailEach.getEndYear())
+                            .build()
+                        ).toList()
+                ).ifPresent(experience::setEducationalExperienceDetails);
+    }
+
+    /**
+     * Method is used to populate the user job experience details from the request <code>jobExperienceDetailsRequestDTO</code>
+     * to the <code>experience</code> document
+     * @param jobExperienceDetails job experience details Request
+     * @param experience experience Document
+     */
+    private void populateUserJobExperienceDetails(final List<JobExperienceDetailsRequest> jobExperienceDetails ,
+                                                  final Experience experience) {
+
+        Optional.ofNullable(jobExperienceDetails)
+                .filter(obj -> !CollectionUtils.isEmpty(obj))
+                .map(obj -> obj.stream()
+                        .map(jobDetailEach -> JobExperienceDetails.builder()
+                                .companyName(jobDetailEach.getCompanyName())
+                                .designation(jobDetailEach.getDesignation())
+                                .startYear(jobDetailEach.getStartYear())
+                                .endYear(jobDetailEach.getEndYear())
+                                .build()
+                        ).toList()
+                ).ifPresent(experience::setJobExperienceDetails);
+    }
+
+
+
+
 }

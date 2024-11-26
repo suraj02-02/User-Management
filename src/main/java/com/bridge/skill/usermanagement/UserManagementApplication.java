@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class UserManagementApplication {
 
 	public static void main(String[] args) {
-	    log.info("Booting Up User Management Application......");
+	   // log.info("Booting Up User Management Application......");
 		SpringApplication.run(UserManagementApplication.class, args);
 	}
 }
