@@ -15,6 +15,7 @@ public class EventDataMapper {
               user -> UserRegistrationEventData.builder()
                       .userId(user.getId())
                       .email(user.getEmail())
+                      .userName(user.getName())
                       .mobileNumber(user.getMobileNumber())
                       .countryCode(user.getCountryCode())
                       .userType(user.getUserType())

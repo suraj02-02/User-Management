@@ -33,7 +33,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Optional;
 
-import static com.bridge.skill.usermanagement.constants.UserConstants.*;
+import static com.bridge.skill.usermanagement.constants.UserConstants.USER_DELETED_SUCCESSFULLY;
+import static com.bridge.skill.usermanagement.constants.UserConstants.USER_NOT_FOUND_WITH_ID;
+import static com.bridge.skill.usermanagement.constants.UserConstants.USER_UPDATED_SUCCESSFULLY;
 
 @Slf4j
 @Service
@@ -48,16 +50,16 @@ public class UserServiceImpl implements UserService {
     private final MessageEventBus messageEventBus;
     private final CableEventTypeConfig cableEventTypeConfig;
 
+
     @Override
     public UserResponse createUser(UserRequest userRequest) {
 
         final User user =  userMapper.toUser(userRequest);
         final User createdUser = userRepository.save(user);
-        /**** Publishing the event for new user registration ****/
+        /* Publishing the event for new user registration */
         this.asyncTaskAcceptor.submit(() -> {
             final String topicBasedOnEvent = this.cableEventTypeConfig.getTopicBasedOnEvent(UserManagementEventType.USER_REGISTRATION_EVENT);
             final UserRegistrationEventData eventData = EventDataMapper.userToUserRegistrationEventData.apply(createdUser);
-            // TODO check if to pass data as string or Json object
             messageEventBus.publishEvent(eventData.toString() , topicBasedOnEvent);
         });
         return userMapper.toUserResponseDto(createdUser);

@@ -13,6 +13,7 @@ import java.io.Serializable;
 public class UserRegistrationEventData implements Serializable {
 
     private String userId;
+    private String userName;
     private UserType userType;
     private String email;
     private String countryCode;
