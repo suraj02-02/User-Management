@@ -10,9 +10,10 @@ import java.io.Serializable;
 @Data
 @Builder
 @ToString
-public class UserRegistrationEventData implements Serializable {
+public class UserRegistrationEventRequest implements Serializable {
 
     private String userId;
+    private String userName;
     private UserType userType;
     private String email;
     private String countryCode;
