@@ -1,10 +1,8 @@
 package com.bridge.skill.usermanagement.service.impl;
 
-import com.bridge.skill.usermanagement.config.CableEventTypeConfig;
 import com.bridge.skill.usermanagement.constants.enums.UserManagementEventType;
 import com.bridge.skill.usermanagement.dto.model.EducationalDetails;
 import com.bridge.skill.usermanagement.dto.model.JobExperienceDetails;
-import com.bridge.skill.usermanagement.dto.model.UserRegistrationEventData;
 import com.bridge.skill.usermanagement.dto.request.EducationalDetailsRequest;
 import com.bridge.skill.usermanagement.dto.request.JobExperienceDetailsRequest;
 import com.bridge.skill.usermanagement.dto.request.UpdateUserRequest;
@@ -48,8 +46,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final AsyncTaskAcceptor asyncTaskAcceptor;
     private final MessageEventBus messageEventBus;
-    private final CableEventTypeConfig cableEventTypeConfig;
-
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
@@ -57,11 +53,10 @@ public class UserServiceImpl implements UserService {
         final User user =  userMapper.toUser(userRequest);
         final User createdUser = userRepository.save(user);
         /* Publishing the event for new user registration */
-        this.asyncTaskAcceptor.submit(() -> {
-            final String topicBasedOnEvent = this.cableEventTypeConfig.getTopicBasedOnEvent(UserManagementEventType.USER_REGISTRATION_EVENT);
-            final UserRegistrationEventData eventData = EventDataMapper.userToUserRegistrationEventData.apply(createdUser);
-            messageEventBus.publishEvent(eventData.toString() , topicBasedOnEvent);
-        });
+        this.asyncTaskAcceptor.submit(() -> messageEventBus.publishEvent(
+                EventDataMapper.userToUserRegistrationEventData.apply(createdUser).toString() ,
+                UserManagementEventType.USER_REGISTRATION_EVENT
+        ));
         return userMapper.toUserResponseDto(createdUser);
     }
 
@@ -99,8 +94,8 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findById(userId)
                 .map(user -> {
                     this.userRepository.deleteById(user.getId());
-                    /**** Asynchronous deletion of related documents using virtual
-                     **** threads for better performance and responsiveness ******/
+                    /* Asynchronous deletion of related documents using virtual
+                       threads for better performance and responsiveness */
                     this.asyncTaskAcceptor.submit(() -> {
                         this.experienceRepository.deleteByUserId(user.getId());
                         this.skillsRepository.deleteByUserId(user.getId());

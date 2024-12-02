@@ -1,11 +1,11 @@
 package com.bridge.skill.usermanagement.integration.messagingbusclient;
 
+import com.bridge.skill.usermanagement.config.CableEventTypeConfig;
+import com.bridge.skill.usermanagement.constants.enums.UserManagementEventType;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This is one of the implementations of <code>MessageEventBus</code>.
@@ -14,23 +14,21 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class KafkaEventCable implements MessageEventBus {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-
-    public KafkaEventCable(final KafkaTemplate<String, Object> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final CableEventTypeConfig cableEventTypeConfig;
 
     @Override
-    public void publishEvent(final Object event , final String topic) {
+    public void publishEvent(final String event, final UserManagementEventType eventType) {
 
-        final CompletableFuture<SendResult<String, Object>> future = this.kafkaTemplate.send(topic , event);
-        future.whenComplete((result , ex) -> {
+        final String topicName = this.cableEventTypeConfig.getTopicBasedOnEvent(eventType);
+        this.kafkaTemplate.send(topicName , event).whenComplete((result , ex) -> {
             if (ex != null) {
-                log.error("Error while publishing event to kafka", ex);
+                log.error("Error occurred while publishing event to kafka due to : {}", ex.getMessage());
             }else {
-                log.info("Event published to kafka successfully");
+                log.info("Event published to kafka successfully on topic : {}" , result.getRecordMetadata().topic());
             }
         });
     }
