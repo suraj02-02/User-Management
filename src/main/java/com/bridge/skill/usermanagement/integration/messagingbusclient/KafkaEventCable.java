@@ -2,6 +2,7 @@ package com.bridge.skill.usermanagement.integration.messagingbusclient;
 
 import com.bridge.skill.usermanagement.config.CableEventTypeConfig;
 import com.bridge.skill.usermanagement.constants.enums.UserManagementEventType;
+import com.bridge.skill.usermanagement.util.MessageConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,13 +19,14 @@ import org.springframework.stereotype.Service;
 public class KafkaEventCable implements MessageEventBus {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final MessageConverter messageConverter;
     private final CableEventTypeConfig cableEventTypeConfig;
 
     @Override
-    public void publishEvent(final String event, final UserManagementEventType eventType) {
+    public void publishEvent(final Object event, final UserManagementEventType eventType) {
 
         final String topicName = this.cableEventTypeConfig.getTopicBasedOnEvent(eventType);
-        this.kafkaTemplate.send(topicName , event).whenComplete((result , ex) -> {
+        this.kafkaTemplate.send(topicName , messageConverter.serialize(event)).whenComplete((result , ex) -> {
             if (ex != null) {
                 log.error("Error occurred while publishing event to kafka due to : {}", ex.getMessage());
             }else {

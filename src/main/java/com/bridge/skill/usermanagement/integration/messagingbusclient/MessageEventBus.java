@@ -14,7 +14,7 @@ public interface MessageEventBus {
      * @param eventData Data to be pushed
      * @param eventType Type of event
      */
-    void publishEvent(final String eventData , final UserManagementEventType eventType);
+    void publishEvent(final Object eventData , final UserManagementEventType eventType);
 
     /**
      * Method is used to consume event from message broker configured

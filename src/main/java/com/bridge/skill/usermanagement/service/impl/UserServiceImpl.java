@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         final User createdUser = userRepository.save(user);
         /* Publishing the event for new user registration */
         this.asyncTaskAcceptor.submit(() -> messageEventBus.publishEvent(
-                EventDataMapper.userToUserRegistrationEventData.apply(createdUser).toString() ,
+                EventDataMapper.userToUserRegistrationEventData.apply(createdUser) ,
                 UserManagementEventType.USER_REGISTRATION_EVENT
         ));
         return userMapper.toUserResponseDto(createdUser);
