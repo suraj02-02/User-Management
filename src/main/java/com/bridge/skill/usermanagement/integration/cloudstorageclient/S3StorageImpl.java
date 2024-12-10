@@ -1,5 +1,6 @@
 package com.bridge.skill.usermanagement.integration.cloudstorageclient;
 
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -27,7 +28,15 @@ public class S3StorageImpl implements IStorageClient {
          *  TODO read credentials from properties
          */
         this.awsS3Client = AmazonS3Client.builder()
-                .withCredentials((AWSCredentialsProvider) new BasicAWSCredentials(null , null))
+                .withCredentials(new AWSCredentialsProvider() {
+                    @Override
+                    public AWSCredentials getCredentials() {
+                        return new BasicAWSCredentials("accessKey" , "secretKey");
+                    }
+                    @Override
+                    public void refresh() {
+                    }
+                })
                 .withRegion(Regions.DEFAULT_REGION)
                 .build();
     }
