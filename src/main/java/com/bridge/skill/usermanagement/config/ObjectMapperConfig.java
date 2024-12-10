@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.bridge.skill.usermanagement.constants.UserConstants.datePattern;
+import static com.bridge.skill.usermanagement.constants.UserConstants.DATE_PATTERN;
 
 @Configuration
 public class ObjectMapperConfig {
@@ -30,11 +30,11 @@ public class ObjectMapperConfig {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .registerModule(new Jdk8Module())
             .registerModule(new JavaTimeModule())
-            .registerModule((new SimpleModule()).addSerializer(new LocalDateSerializer(DateTimeFormatter.ofPattern(datePattern))))
-            .registerModule((new SimpleModule()).addSerializer(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(datePattern))))
-            .registerModule((new SimpleModule()).addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(datePattern))))
+            .registerModule((new SimpleModule()).addSerializer(new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN))))
+            .registerModule((new SimpleModule()).addSerializer(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN))))
+            .registerModule((new SimpleModule()).addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN))))
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .setDateFormat(new SimpleDateFormat(datePattern));
+            .setDateFormat(new SimpleDateFormat(DATE_PATTERN));
     }
 
 }
