@@ -20,7 +20,7 @@ import com.bridge.skill.usermanagement.mapper.UserMapper;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
 import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
-import com.bridge.skill.usermanagement.service.intf.UserService;
+import com.bridge.skill.usermanagement.service.intf.IUserService;
 import com.bridge.skill.usermanagement.util.AsyncTaskAcceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ import static com.bridge.skill.usermanagement.constants.UserConstants.USER_UPDAT
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
     private final ExperienceRepository experienceRepository;
