@@ -4,6 +4,8 @@ import com.bridge.skill.usermanagement.dto.response.*;
 import com.bridge.skill.usermanagement.entities.Experience;
 import com.bridge.skill.usermanagement.entities.Skills;
 import com.bridge.skill.usermanagement.entities.User;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.function.Function;
 /**
  * This class for conversion of <code>User</code> object to required user response object
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RetrieveUserMapper {
 
     /**

@@ -14,11 +14,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-      /***** Exception handler for <code>UserNotFoundException</code> ******/
-      @ExceptionHandler(UserNotFoundException.class)
-      public ResponseEntity<GenericExceptionResponse> handleUserNotFoundException(final UserNotFoundException exception) {
-          return new ResponseEntity<>(GenericExceptionMapper.convertUserNotFoundExceptionToGenericExceptionResponse.apply(exception) , HttpStatus.NOT_FOUND);
-      }
+    /***** Exception handler for <code>UserNotFoundException</code> ******/
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<GenericExceptionResponse> handleUserNotFoundException(final UserNotFoundException exception) {
+        return new ResponseEntity<>(GenericExceptionMapper.convertUserNotFoundExceptionToGenericExceptionResponse.apply(exception) , HttpStatus.NOT_FOUND);
+    }
+
+    /***** Exception handler for <code>FileUploadException</code> ******/
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<GenericExceptionResponse> handleFileUploadException(final FileUploadException exception) {
+        return new ResponseEntity<>(GenericExceptionMapper.convertFileUploadExceptionToGenericExceptionResponse.apply(exception) , HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /***** Exception handler for <code>IllegalArgumentException</code> ******/
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GenericExceptionResponse> handleIllegalArgumentException(final IllegalArgumentException exception) {
+        return new ResponseEntity<>(GenericExceptionMapper.convertIllegalArgumentExceptionToGenericExceptionResponse.apply(exception) , HttpStatus.BAD_REQUEST);
+    }
 
     /***** Exception handler for <code>Exception</code> ******/
     @ExceptionHandler(Exception.class)
