@@ -9,7 +9,9 @@ import com.bridge.skill.usermanagement.service.intf.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @AllArgsConstructor
 public class UserController implements IUserController {
 
