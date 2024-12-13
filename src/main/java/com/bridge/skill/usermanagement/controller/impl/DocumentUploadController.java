@@ -3,6 +3,7 @@ package com.bridge.skill.usermanagement.controller.impl;
 import com.bridge.skill.usermanagement.controller.IDocumentUploadController;
 import com.bridge.skill.usermanagement.service.intf.IUploadService;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author surajyadav
  */
+@RestController
 @AllArgsConstructor
 public class DocumentUploadController implements IDocumentUploadController {
 
