@@ -1,6 +1,5 @@
 package com.bridge.skill.usermanagement.mapper;
 
-import com.bridge.skill.usermanagement.dto.model.UserRegistrationEventData;
 import com.bridge.skill.usermanagement.dto.request.UserRequest;
 import com.bridge.skill.usermanagement.dto.response.UserResponse;
 import com.bridge.skill.usermanagement.entities.User;

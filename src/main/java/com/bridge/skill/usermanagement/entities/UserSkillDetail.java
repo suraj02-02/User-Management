@@ -3,7 +3,10 @@ package com.bridge.skill.usermanagement.entities;
 import com.bridge.skill.usermanagement.constants.enums.SkillProficiency;
 import com.bridge.skill.usermanagement.constants.enums.UserSkills;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -11,7 +14,6 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 public class UserSkillDetail implements Serializable {
 
     @NotBlank(message = "Skill is required")

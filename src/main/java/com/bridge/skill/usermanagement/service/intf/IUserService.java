@@ -5,7 +5,7 @@ import com.bridge.skill.usermanagement.dto.request.UserRequest;
 import com.bridge.skill.usermanagement.dto.response.UserProfileDetailResponse;
 import com.bridge.skill.usermanagement.dto.response.UserResponse;
 
-public interface UserService {
+public interface IUserService {
 
     /**
      * Method is user to create user in the system having required info in the request <code>userRequestDto</code>
