@@ -1,25 +1,50 @@
 package com.bridge.skill.usermanagement.controller.impl;
 
+import com.bridge.skill.usermanagement.constants.enums.DocumentType;
 import com.bridge.skill.usermanagement.controller.IUserController;
 import com.bridge.skill.usermanagement.dto.request.UpdateUserRequest;
 import com.bridge.skill.usermanagement.dto.request.UserRequest;
 import com.bridge.skill.usermanagement.dto.response.UserProfileDetailResponse;
 import com.bridge.skill.usermanagement.dto.response.UserResponse;
+import com.bridge.skill.usermanagement.service.intf.IUploadService;
 import com.bridge.skill.usermanagement.service.intf.IUserService;
-import lombok.AllArgsConstructor;
+import com.bridge.skill.usermanagement.util.DocumentHelper;
+import com.bridge.skill.usermanagement.util.FileValidator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController implements IUserController {
 
     private final IUserService userService;
 
+    private final IUploadService uploadService;
+
+    private final FileValidator fileValidator;
+
     @Override
-    public ResponseEntity<UserResponse> registerUser(UserRequest userRequest) {
-        return new ResponseEntity<>(userService.createUser(userRequest), HttpStatus.CREATED);
+    public ResponseEntity<UserResponse> registerUser(UserRequest userRequest, MultipartFile file) {
+        try {
+            if(file==null || fileValidator.isValidImage(file)) {
+                UserResponse user = userService.createUser(userRequest);
+                String newFileName = DocumentHelper.buildDocumentName(user.getId(), DocumentType.PROFILE_PIC.name());
+                uploadService.uploadDocument(file, newFileName);
+                return new ResponseEntity<>(user, HttpStatus.CREATED);
+            }
+            else {
+                // ERROR MSG?
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

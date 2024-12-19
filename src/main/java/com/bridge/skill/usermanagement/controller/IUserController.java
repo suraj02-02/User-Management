@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.bridge.skill.usermanagement.constants.UserConstants.*;
 
@@ -21,7 +22,8 @@ public interface IUserController {
      * @return user response
      */
     @PostMapping
-    ResponseEntity<UserResponse> registerUser(@RequestBody @Validated UserRequest userRequest);
+    ResponseEntity<UserResponse> registerUser(@RequestPart("userRequest") @Validated UserRequest userRequest,
+                                              @RequestPart("file") MultipartFile file);
 
     /**
      * Invoke this endpoint to fetch user details using <code>userId</code>

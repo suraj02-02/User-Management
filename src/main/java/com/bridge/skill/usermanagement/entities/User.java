@@ -34,7 +34,7 @@ public class User {
     private String countryCode;
     private String mobileNumber;
     private String password;
-    private String profilePictureUrl;
+    private byte[] profilePicture;
     private UserType userType;
     @CreatedDate
     private LocalDateTime createdOn;

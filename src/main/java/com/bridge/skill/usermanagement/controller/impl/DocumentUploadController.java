@@ -28,7 +28,7 @@ public class DocumentUploadController implements IDocumentUploadController {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File cannot empty!");
         }
-        return this.iUploadService.uploadDocument(file);
+        return this.iUploadService.uploadDocument(file, "");
     }
 
 }

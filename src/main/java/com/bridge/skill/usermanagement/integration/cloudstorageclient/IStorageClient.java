@@ -15,5 +15,18 @@ public interface IStorageClient {
        * @param inputStream
        * @param fileName
        */
-      void uploadDocument(final InputStream inputStream , final String fileName);
+      void uploadDocument(final InputStream inputStream , final String fileName, String bucketName);
+
+      // Download file from S3
+      InputStream downloadFile(String fileName, String bucketName);
+
+      // Delete file from S3
+      void deleteFile(String fileName, String bucketName);
+
+      /**
+       * Delete all the documents in the bucket for the given prefix.
+       * @param prefix
+       * @param bucketName
+       */
+      void deleteAllDocumentsForPrefix(String prefix, String bucketName);
 }
