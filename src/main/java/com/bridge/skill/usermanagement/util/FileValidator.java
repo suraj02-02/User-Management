@@ -3,8 +3,10 @@ package com.bridge.skill.usermanagement.util;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.InvalidMimeTypeException;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,10 +32,12 @@ public class FileValidator {
      * @return The detected MIME type.
      * @throws IOException If an I/O error occurs.
      */
-    public String detectMimeType(MultipartFile file) throws IOException {
+    public String detectMimeType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             Metadata metadata = new Metadata();
             return tika.detect(inputStream, metadata);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -57,14 +61,24 @@ public class FileValidator {
         return "application/pdf".equals(mimeType);
     }
 
-    public boolean isValidImage(MultipartFile file) throws IOException {
+    public void validateImage(MultipartFile file) throws FileSizeLimitExceededException {
        String mimeType =  detectMimeType(file);
-       return isImage(mimeType) && file.getSize() <= maxImageSize;
+        if (!isImage(mimeType)) {
+            throw new InvalidMimeTypeException(mimeType ,  "File is not an image with fileName :" + file.getOriginalFilename());
+        }
+        if(! (file.getSize() > maxImageSize)) {
+            throw new FileSizeLimitExceededException("File size limit exceeded" , file.getSize() , maxImageSize);
+        }
     }
 
-    public boolean isValidPdf(MultipartFile file) throws IOException {
+    public void validatePdf(MultipartFile file) {
         String mimeType =  detectMimeType(file);
-        return isPdf(mimeType) && file.getSize() <= maxPdfSize;
+        if(!isPdf(mimeType)) {
+
+        }
+        if(! (file.getSize() > maxPdfSize)) {
+
+        }
     }
 
 

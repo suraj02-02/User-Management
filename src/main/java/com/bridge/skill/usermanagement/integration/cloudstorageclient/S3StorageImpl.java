@@ -39,15 +39,15 @@ public class S3StorageImpl implements IStorageClient {
     public void init() {
         // Initialize the AmazonS3 client after properties are injected
         this.awsS3Client = AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKeyId, secretAccessKey))).
-                withRegion(Regions.US_EAST_2).build();
+                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKeyId, secretAccessKey)))
+                .withRegion(Regions.US_EAST_2).build();
     }
 
     @Override
     public void uploadDocument(InputStream inputStream, String fileName, String bucketName) {
         try {
             if (awsS3Client.doesObjectExist(bucketName, fileName)) {
-                deleteFile(bucketName, fileName);
+                deleteFile(fileName , bucketName);
                 System.out.println(" Already existing file with file name " + fileName + " is deleted successfully ");
             }
             ObjectMetadata metadata = new ObjectMetadata();

@@ -21,8 +21,8 @@ public interface IUploadService {
      * @param newFileName
      * @return message
      */
-    String uploadDocument(final MultipartFile file, String newFileName);
+    String uploadDocument(final MultipartFile file, final String newFileName);
 
-    String deleteAllDocumentsForPrefix(String userId);
+    String deleteAllDocumentsForPrefix(final String userId);
 
 }

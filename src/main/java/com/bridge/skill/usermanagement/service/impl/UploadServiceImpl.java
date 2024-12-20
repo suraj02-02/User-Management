@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static com.bridge.skill.usermanagement.constants.UserConstants.FILES_DELETED_SUCCESSFULLY;
-import static com.bridge.skill.usermanagement.constants.UserConstants.FILE_UPLOADED_SUCCESSFULLY;
 
 /**
  * Implementation is to handle upload documents / file based on the configured cloud storage of the system
@@ -30,6 +29,7 @@ public class UploadServiceImpl implements IUploadService {
 
     @Override
     public String uploadDocument(final MultipartFile file, String newFileName) {
+
         try {
             final InputStream inputStream = file.getInputStream();
             this.iStorageClient.uploadDocument(inputStream, newFileName, documentBucketName);
