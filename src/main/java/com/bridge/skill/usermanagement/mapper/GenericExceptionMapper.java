@@ -5,7 +5,9 @@ import com.bridge.skill.usermanagement.exception.FileUploadException;
 import com.bridge.skill.usermanagement.exception.UserNotFoundException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.InvalidMimeTypeException;
 
 import java.time.LocalDateTime;
 import java.util.function.Function;
@@ -42,6 +44,29 @@ public class GenericExceptionMapper {
                     .exceptionMessage(illegalArgumentException.getMessage())
                     .timestamp(LocalDateTime.now())
                     .build();
+
+
+    /**
+     *  Transforms the <code>FileSizeLimitExceededException</code> exception to <code>GenericExceptionResponse</code> for client exception response
+     */
+    public static final Function<FileSizeLimitExceededException, GenericExceptionResponse> convertFileSizeLimitExceededExceptionToGenericExceptionResponse =
+            fileSizeLimitException -> GenericExceptionResponse.builder()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .exceptionMessage(fileSizeLimitException.getMessage())
+                    .timestamp(LocalDateTime.now())
+                    .build();
+
+    /**
+     *  Transforms the <code>InvalidMimeTypeException</code> exception to <code>GenericExceptionResponse</code> for client exception response
+     */
+    public static final Function<InvalidMimeTypeException, GenericExceptionResponse> convertInvalidMimeTypeExceptionToGenericExceptionResponse =
+            invalidMimeTypeException -> GenericExceptionResponse.builder()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .exceptionMessage(invalidMimeTypeException.getMessage())
+                    .timestamp(LocalDateTime.now())
+                    .build();
+
+
 
     /**
      *  Transforms the <code>Exception</scode> exception to <code>GenericExceptionResponse</code> for client exception response

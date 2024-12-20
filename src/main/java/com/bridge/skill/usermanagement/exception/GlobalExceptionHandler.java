@@ -2,8 +2,10 @@ package com.bridge.skill.usermanagement.exception;
 
 import com.bridge.skill.usermanagement.dto.response.GenericExceptionResponse;
 import com.bridge.skill.usermanagement.mapper.GenericExceptionMapper;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.InvalidMimeTypeException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,6 +32,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<GenericExceptionResponse> handleIllegalArgumentException(final IllegalArgumentException exception) {
         return new ResponseEntity<>(GenericExceptionMapper.convertIllegalArgumentExceptionToGenericExceptionResponse.apply(exception) , HttpStatus.BAD_REQUEST);
+    }
+
+    /***** Exception handler for <code>FileSizeLimitExceededException</code> ******/
+    @ExceptionHandler(FileSizeLimitExceededException.class)
+    public ResponseEntity<GenericExceptionResponse> handleFileSizeLimitExceededException(final FileSizeLimitExceededException exception) {
+        return new ResponseEntity<>(GenericExceptionMapper.convertFileSizeLimitExceededExceptionToGenericExceptionResponse.apply(exception) , HttpStatus.BAD_REQUEST);
+    }
+
+    /***** Exception handler for <code>InvalidMimeTypeException</code> ******/
+    @ExceptionHandler(InvalidMimeTypeException.class)
+    public ResponseEntity<GenericExceptionResponse> handleInvalidMimeTypeException(final InvalidMimeTypeException exception) {
+        return new ResponseEntity<>(GenericExceptionMapper.convertInvalidMimeTypeExceptionToGenericExceptionResponse.apply(exception) , HttpStatus.BAD_REQUEST);
     }
 
     /***** Exception handler for <code>Exception</code> ******/

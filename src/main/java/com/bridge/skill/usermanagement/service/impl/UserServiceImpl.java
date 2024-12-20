@@ -20,6 +20,7 @@ import com.bridge.skill.usermanagement.mapper.UserMapper;
 import com.bridge.skill.usermanagement.repository.ExperienceRepository;
 import com.bridge.skill.usermanagement.repository.SkillsRepository;
 import com.bridge.skill.usermanagement.repository.UserRepository;
+import com.bridge.skill.usermanagement.service.intf.IUploadService;
 import com.bridge.skill.usermanagement.service.intf.IUserService;
 import com.bridge.skill.usermanagement.util.AsyncTaskAcceptor;
 import lombok.RequiredArgsConstructor;
@@ -46,11 +47,13 @@ public class UserServiceImpl implements IUserService {
     private final UserMapper userMapper;
     private final AsyncTaskAcceptor asyncTaskAcceptor;
     private final MessageEventBus messageEventBus;
+    private final IUploadService uploadService;
 
     @Override
-    public UserResponse createUser(UserRequest userRequest) {
+    public UserResponse createUser(final UserRequest userRequest, final byte[] bytes) {
 
-        final User user =  userMapper.toUser(userRequest);
+        final User user = userMapper.toUser(userRequest);
+        user.setProfilePicture(bytes);
         final User createdUser = userRepository.save(user);
         /* Publishing the event for new user registration */
         this.asyncTaskAcceptor.submit(() -> messageEventBus.publishEvent(
@@ -99,6 +102,8 @@ public class UserServiceImpl implements IUserService {
                     this.asyncTaskAcceptor.submit(() -> {
                         this.experienceRepository.deleteByUserId(user.getId());
                         this.skillsRepository.deleteByUserId(user.getId());
+                        // Delete all the documents from S3 for #userId
+                        this.uploadService.deleteAllDocumentsForPrefix(userId);
                     });
                     return USER_DELETED_SUCCESSFULLY + userId;
                 })

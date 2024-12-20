@@ -1,8 +1,10 @@
 package com.bridge.skill.usermanagement.controller.impl;
 
 import com.bridge.skill.usermanagement.controller.IDocumentUploadController;
-import com.bridge.skill.usermanagement.service.intf.IUploadService;
+import com.bridge.skill.usermanagement.service.impl.DocumentUploadWorkFlow;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,20 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class DocumentUploadController implements IDocumentUploadController {
 
-    private final IUploadService iUploadService;
+    private final DocumentUploadWorkFlow defaultDocumentUpload;
 
     @Override
-    public String uploadDocument(final MultipartFile file) {
-
-        /**
-         * TODO
-         *   Different validations needs to be handled for the input file.
-         *   e.g. file size , null checks , format
-         */
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File cannot empty!");
-        }
-        return this.iUploadService.uploadDocument(file);
+    public ResponseEntity<String> uploadDocument(final MultipartFile file, String userId, String documentType) throws FileSizeLimitExceededException {
+        // TODO document type validation missing
+        this.defaultDocumentUpload.uploadDocument(file, userId, documentType);
+        return ResponseEntity.ok("Document uploaded successfully");
     }
 
 }

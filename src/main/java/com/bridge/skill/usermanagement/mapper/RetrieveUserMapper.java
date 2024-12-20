@@ -47,7 +47,7 @@ public class RetrieveUserMapper {
                                             .name(user.getName())
                                             .email(user.getEmail())
                                             .userType(user.getUserType())
-                                            .profilePictureUrl(user.getProfilePictureUrl())
+                                         //   .profilePictureUrl(user.getProfilePictureUrl())
                                             .build()
                     ).orElse(null);
 

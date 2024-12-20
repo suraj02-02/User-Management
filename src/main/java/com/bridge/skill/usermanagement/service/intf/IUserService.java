@@ -9,11 +9,13 @@ public interface IUserService {
 
     /**
      * Method is user to create user in the system having required info in the request <code>userRequestDto</code>
+     *
      * @param userRequest user info
+     * @param bytes
      * @return user response
      */
 
-    UserResponse createUser(final UserRequest userRequest);
+    UserResponse createUser(final UserRequest userRequest, byte[] bytes);
 
     /**
      * <p>

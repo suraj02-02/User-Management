@@ -28,7 +28,6 @@ public class UserRequest implements Serializable {
 
     @NotBlank
     private String password;
-    private String profilePictureUrl;
 
     @NotNull
     private UserType userType;

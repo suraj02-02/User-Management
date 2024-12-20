@@ -25,3 +25,17 @@ messaging:
       FORGOT_PASSWORD_EVENT: forgot-password-topic
       RESET_PASSWORD_EVENT: forgot-password-topic
       OTP_VERIFICATION_EVENT: otp-verification-topic
+
+documentType: PROFILE_PIC, RESUME
+file:
+  upload:
+    max:
+      image:
+        size: 2097152  # 2MB in bytes
+      pdf:
+        size: 5242880  # 5MB in bytes
+
+accessKeyId: "AKIA4RCAOATL25MNEXQ3"
+secretAccessKey: "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"
+documentBucketName: "skillbridge.com-user-documents"
+

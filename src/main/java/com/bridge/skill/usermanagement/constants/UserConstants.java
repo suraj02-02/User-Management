@@ -18,7 +18,9 @@ public class UserConstants {
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully with id : ";
     public static final String USER_UPDATED_SUCCESSFULLY = "User updated successfully with id : ";
     public static final String FILE_UPLOADED_SUCCESSFULLY = "File uploaded successfully with name : ";
+    public static final String FILES_DELETED_SUCCESSFULLY = "Files deleted successfully with prefix : ";
 
     /******* Pattern constants ******/
     public static final String DATE_PATTERN = "dd/MM/yyyy HH:mm:ss";
+
 }
